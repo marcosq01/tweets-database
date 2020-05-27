@@ -30,11 +30,13 @@ auth.set_access_token(access_token, access_token_secret)
 api = tweepy.API(auth)
 ####
 
-server = 'LAPTOP-LQAD8GE3\SQLEXPRESS'
+server = 'database-1.cfrrewunyxyr.us-east-2.rds.amazonaws.com,1433'
 database = 'TwitterProject'
 driver = '{SQL Server}'
+username = 'admin'
+password = 'Esquimal21'
 
-conn = pyodbc.connect('DRIVER='+driver+';SERVER='+server+';DATABASE='+database+';TRUSTED_CONNECTION=’yes')
+conn = pyodbc.connect('DRIVER='+driver+';SERVER='+server+';DATABASE='+database+';UID='+username+';PWD='+password)
 
 cursor = conn.cursor()
 # TEST db connection

@@ -22,7 +22,7 @@ DROP TABLE RESEARCHERS;
 
 -- 
 CREATE TABLE RESEARCHERS (
-    researcher_id  INT,
+    researcher_id  BIGINT,
     full_name      NVARCHAR(60) NOT NULL,
     sex            NCHAR(1) NOT NULL,
     profile        NVARCHAR(400),
@@ -57,7 +57,7 @@ CREATE TABLE USERS (
     handle            NVARCHAR(25),
     name              NVARCHAR(75),
     bio               NVARCHAR(400),
-    location          NVARCHAR(30),
+    location          NVARCHAR(60),
     verified          BIT,
     --  number of Tweets the account has posted
     statuses_count    BIGINT,
@@ -67,7 +67,7 @@ CREATE TABLE USERS (
     -- 	The number of Tweets this user has liked in the account’s lifetime
     favourites_count  BIGINT,
     -- the date the account was created as string NOT as a Date
-    created_at        NVARCHAR(45),
+    created_at        NVARCHAR(60),
     PRIMARY KEY(userid)
 );
 

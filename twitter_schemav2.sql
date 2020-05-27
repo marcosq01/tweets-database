@@ -23,7 +23,7 @@ DROP TABLE RESEARCHERS;
 -- 
 CREATE TABLE RESEARCHERS (
     researcher_id  BIGINT,
-    full_name      NVARCHAR(60) NOT NULL,
+    full_name      NVARCHAR(100) NOT NULL,
     sex            NCHAR(1) NOT NULL,
     profile        NVARCHAR(400),
     date_of_birth  DATE NOT NULL,
@@ -38,7 +38,7 @@ CREATE TABLE RESEARCHERS (
 CREATE TABLE SEARCHES (
     search_id     BIGINT,
     description   NVARCHAR(400),
-    researcher_id INT,
+    researcher_id BIGINT,
     PRIMARY KEY(search_id),
     FOREIGN KEY(researcher_id) references RESEARCHERS(researcher_id)
 );
@@ -54,10 +54,10 @@ CREATE TABLE SEARCHES (
 -- ustedes definen que datos quieren guardar, mínimo el handle, bio, timezone, location, etc.
 CREATE TABLE USERS (
     userid            BIGINT,
-    handle            NVARCHAR(25),
-    name              NVARCHAR(75),
+    handle            NVARCHAR(60),
+    name              NVARCHAR(100),
     bio               NVARCHAR(400),
-    location          NVARCHAR(60),
+    location          NVARCHAR(200),
     verified          BIT,
     --  number of Tweets the account has posted
     statuses_count    BIGINT,
@@ -74,17 +74,17 @@ CREATE TABLE USERS (
 -- Places
 
 CREATE TABLE PLACES (
-    place_id          NVARCHAR(50),
-    short_name        NVARCHAR(40),
-    full_name         NVARCHAR(40),
+    place_id          NVARCHAR(100),
+    short_name        NVARCHAR(70),
+    full_name         NVARCHAR(150),
 
     
     -- coordinates
     coordinates       NVARCHAR(300),
-    coordinates_type  NVARCHAR(30),
-    place_type        NVARCHAR(20),
-    country           NVARCHAR(30),
-    country_code      NVARCHAR(15),
+    coordinates_type  NVARCHAR(40),
+    place_type        NVARCHAR(30),
+    country           NVARCHAR(50),
+    country_code      NVARCHAR(50),
 
     PRIMARY KEY(place_id)
 
@@ -94,9 +94,13 @@ CREATE TABLE PLACES (
 
 CREATE TABLE TWEETS (
     tweet_id           BIGINT,
-    tweet_text         NVARCHAR(500),
+    tweet_text         NVARCHAR(600),
     userid             BIGINT,
     favorite_count     BIGINT,
+    retweet_count      BIGINT,
+    quote_count        BIGINT,
+    reply_count        BIGINT,
+    
     search_id          BIGINT,
 
     -- if tweet is a retweet, retweet_id will have the tweet_id of the original tweet, else NULL
@@ -106,12 +110,12 @@ CREATE TABLE TWEETS (
     -- if tweet is a reply, reply_id will have the tweet_id of the original tweet, else NULL
     reply_id           BIGINT,
 
-    lang               NVARCHAR(20),
+    lang               NVARCHAR(50),
     possibly_sensitive BIT,
-    created_at         NVARCHAR(30),
+    created_at         NVARCHAR(60),
     coordinates        NVARCHAR(300),
-    coordinates_type   NVARCHAR(30),
-    place_id           NVARCHAR(50),
+    coordinates_type   NVARCHAR(60),
+    place_id           NVARCHAR(100),
 
     PRIMARY KEY(tweet_id),
     FOREIGN KEY(userid) references USERS(userid),
@@ -134,8 +138,8 @@ CREATE TABLE HASHTAGS (
 CREATE TABLE MENTIONS (
     tweet_id    BIGINT,
     -- assume mentioned_user_id is not necessary nor relevant
-    handle      NVARCHAR(25),
-    name        NVARCHAR(75),
+    handle      NVARCHAR(50),
+    name        NVARCHAR(150),
      
     PRIMARY KEY(tweet_id, handle),
     FOREIGN KEY(tweet_id) references TWEETS(tweet_id)

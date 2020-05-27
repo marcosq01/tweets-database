@@ -49,6 +49,7 @@ CREATE TABLE SEARCHES (
 -- INSERT INTO SEARCHES VALUES(1, 'Search tweets containing COVID', 1);
 
 
+-- DATE FORMAT = yyyy-mm-dd hh:mm:ss
 
 -- De los Tweets almacenamos la información del usuario,
 -- ustedes definen que datos quieren guardar, mínimo el handle, bio, timezone, location, etc.
@@ -67,7 +68,7 @@ CREATE TABLE USERS (
     -- 	The number of Tweets this user has liked in the account’s lifetime
     favourites_count  BIGINT,
     -- the date the account was created as string NOT as a Date
-    created_at        NVARCHAR(60),
+    created_at        DATE,
     PRIMARY KEY(userid)
 );
 
@@ -112,7 +113,7 @@ CREATE TABLE TWEETS (
 
     lang               NVARCHAR(50),
     possibly_sensitive BIT,
-    created_at         NVARCHAR(60),
+    created_at         DATE,
     coordinates        NVARCHAR(300),
     coordinates_type   NVARCHAR(60),
     place_id           NVARCHAR(100),
@@ -138,7 +139,7 @@ CREATE TABLE HASHTAGS (
 CREATE TABLE MENTIONS (
     tweet_id    BIGINT,
     -- assume mentioned_user_id is not necessary nor relevant
-    handle      NVARCHAR(50),
+    handle      NVARCHAR(60),
     name        NVARCHAR(150),
      
     PRIMARY KEY(tweet_id, handle),

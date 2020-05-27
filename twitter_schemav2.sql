@@ -30,6 +30,8 @@ CREATE TABLE RESEARCHERS (
     PRIMARY KEY(researcher_id)
 );
 
+INSERT INTO RESEARCHERS VALUES(1, 'SUPER RESEARCHER', 'N', 'Hello! I am a super-researcher :)', '01-01-2000')
+
 -- actualizarlas
 
 -- INSERT INTO RESEARCHERS VALUES (1, 'Marcos Quintero Ornelas', 'M',
@@ -38,9 +40,9 @@ CREATE TABLE RESEARCHERS (
 CREATE TABLE SEARCHES (
     search_id     BIGINT,
     description   NVARCHAR(400),
-    researcher_id BIGINT,
+    researcher_id BIGINT default 1,
     PRIMARY KEY(search_id),
-    FOREIGN KEY(researcher_id) references RESEARCHERS(researcher_id)
+    FOREIGN KEY(researcher_id) references RESEARCHERS(researcher_id) on delete set default
 );
 
 -- insert researcher first and then a search

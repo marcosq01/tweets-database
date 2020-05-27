@@ -113,7 +113,7 @@ def process_tweet(tweet, researcherID, search_id):
     tweet_created_at = datetime.strptime(tweet['created_at'],'%a %b %d %H:%M:%S +0000 %Y')
 
     if tweet['coordinates'] != None:
-        tweet_coordinates = ', '.join(str(x) for y in tweet['coordinates']['coordinates'])
+        tweet_coordinates = ', '.join(str(x) for x in tweet['coordinates']['coordinates'])
         tweet_coordinates_type = tweet['coordinates']['type']
     else:
         tweet_coordinates = None

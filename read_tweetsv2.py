@@ -67,10 +67,27 @@ def process_tweet(tweet, researcherID, search_id):
     tweet_id = tweet['id']
     tweet_text = tweet['text']
     # userid
-    favorite_count = tweet['favorite_count']
-    quote_count = tweet['quote_count']
-    reply_count = tweet['reply_count']
-    retweet_count = tweet['retweet_count']
+
+    if 'favorite_count' in tweet and tweet['favorite_count'] != None:
+        favorite_count = tweet['favorite_count']
+    else:
+        favorite_count = None
+    
+    if 'quote_count' in tweet and tweet['quote_count'] != None:
+        quote_count = tweet['quote_count']
+    else:
+        quote_count = None
+    
+    if 'reply_count' in tweet and tweet['reply_count'] != None:
+        reply_count = tweet['reply_count']
+    else:
+        reply_count = None
+    
+    if 'retweet_count' in tweet and tweet['retweet_count'] != None:
+        retweet_count = tweet['retweet_count']
+    else:
+        retweet_count = None
+
     # search_id
     lang = tweet['lang']
 

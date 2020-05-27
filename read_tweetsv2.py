@@ -12,6 +12,7 @@ import os
 
 from tweepy import API
 
+from datetime import datetime
 
 from dotenv import load_dotenv
 load_dotenv(dotenv_path='app.env', verbose=True)
@@ -60,8 +61,8 @@ def process_tweet(tweet, researcherID, search_id):
     followers_count = tweet['user']['followers_count']
     friends_count = tweet['user']['friends_count']
     favourites_count = tweet['user']['favourites_count']
-    created_at = tweet['user']['created_at']
-    
+    created_at = datetime.strptime(tweet['user']['created_at'],'%a %b %d %H:%M:%S +0000 %Y')
+
 
     ################################      TWEET info
     tweet_id = tweet['id']
@@ -107,7 +108,7 @@ def process_tweet(tweet, researcherID, search_id):
     else:
         possibly_sensitive = None
 
-    tweet_created_at = tweet['created_at']
+    tweet_created_at = datetime.strptime(tweet['created_at'],'%a %b %d %H:%M:%S +0000 %Y')
 
     if tweet['coordinates'] != None:
         tweet_coordinates = ', '.join(str(x) for y in tweet['coordinates']['coordinates'])

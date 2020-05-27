@@ -30,13 +30,11 @@ auth.set_access_token(access_token, access_token_secret)
 api = tweepy.API(auth)
 ####
 
-server = 'database-1.cfrrewunyxyr.us-east-2.rds.amazonaws.com,1433'
+server = 'LAPTOP-LQAD8GE3\SQLEXPRESS'
 database = 'TwitterProject'
 driver = '{SQL Server}'
-username = 'admin'
-password = 'Esquimal21'
 
-conn = pyodbc.connect('DRIVER='+driver+';SERVER='+server+';DATABASE='+database+';UID='+username+';PWD='+password)
+conn = pyodbc.connect('DRIVER='+driver+';SERVER='+server+';DATABASE='+database+';TRUSTED_CONNECTION=’yes')
 
 cursor = conn.cursor()
 # TEST db connection
@@ -70,39 +68,22 @@ def process_tweet(tweet, researcherID, search_id):
     tweet_text = tweet['text']
     # userid
     favorite_count = tweet['favorite_count']
+    quote_count = tweet['quote_count']
+    reply_count = tweet['reply_count']
+    retweet_count = tweet['retweet_count']
     # search_id
     lang = tweet['lang']
 
-    # if tweet is a retweet, if it's in the dictionary
-    if 'retweeted_status' in tweet:
-        retweet_id = tweet['retweeted_status']['id']
-        process_tweet(tweet['retweeted_status'], researcherID, search_id)
-    else:
-        retweet_id = None
+    retweet_id = None
 
-    #if tweet is a quote
-    if 'quoted_status' in tweet:
-        quote_id = tweet['quoted_status_id']
-        #print('hola')
-        process_tweet(tweet['quoted_status'], researcherID, search_id)
-    else:
-        quote_id = None
+    quote_id = None
 
-
-    # if place is not null
     if tweet['place'] != None:
         place_id = tweet['place']['id']
     else:
         place_id = None
 
-    # if tweet is a reply
-    if tweet['in_reply_to_status_id'] != None:
-        reply_id = tweet['in_reply_to_status_id']
-        # tw would be the new tweet
-        tw = api.get_status(reply_id)._json
-        process_tweet(tw, researcherID, search_id)
-    else:
-        reply_id = None
+    reply_id = None
 
     if 'possibly_sensitive' in tweet:
         possibly_sensitive = tweet['possibly_sensitive']
@@ -165,10 +146,10 @@ def process_tweet(tweet, researcherID, search_id):
     rows = cursor.execute('SELECT * FROM TWEETS WHERE tweet_id = ?', tweet_id).fetchall()
     if len(rows) == 0:
         cursor.execute('''
-            INSERT INTO TWEETS (tweet_id, tweet_text, userid, favorite_count, search_id, retweet_id, quote_id, reply_id, lang, possibly_sensitive, created_at, coordinates, coordinates_type, place_id)
+            INSERT INTO TWEETS (tweet_id, tweet_text, userid, favorite_count, retweet_count, quote_count, reply_count, search_id, retweet_id, quote_id, reply_id, lang, possibly_sensitive, created_at, coordinates, coordinates_type, place_id)
                 VALUES
-                    (?,?,?,?,?,?,?,?,?,?,?,?,?,?)
-        ''', (tweet_id, tweet_text, user_id, favorite_count, search_id, retweet_id, quote_id, reply_id, lang, possibly_sensitive, tweet_created_at, tweet_coordinates, tweet_coordinates_type, tweet_place_id))
+                    (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+        ''', (tweet_id, tweet_text, user_id, favorite_count, retweet_count, quote_count, reply_count, search_id, retweet_id, quote_id, reply_id, lang, possibly_sensitive, tweet_created_at, tweet_coordinates, tweet_coordinates_type, tweet_place_id))
         conn.commit()
 
 
@@ -217,8 +198,31 @@ for file_idx, file_name in enumerate(file_lst):
 				# each line is a tweet json object, load it and display user id
                 tweet = json.loads(line)
                 process_tweet(tweet, researcherID, searchID)
+
+                # if tweet is a retweet, if it's in the dictionary
+                if 'retweeted_status' in tweet:
+                    retweet_id = tweet['retweeted_status']['id']
+                    process_tweet(tweet['retweeted_status'], researcherID, searchID)
+                    cursor.execute('UPDATE TWEETS SET retweet_id = ? where tweet_id = ?', retweet_id, tweet['id'])
+                    
+                #if tweet is a quote
+                if 'quoted_status' in tweet:
+                    quote_id = tweet['quoted_status_id']
+                    process_tweet(tweet['quoted_status'], researcherID, searchID)
+                    cursor.execute('UPDATE TWEETS SET quote_id = ? where tweet_id = ?', quote_id, tweet['id'])
+                    
+                # if tweet is a reply
+                if tweet['in_reply_to_status_id'] != None:
+                    reply_id = tweet['in_reply_to_status_id']
+                    try:
+                        tw = api.get_status(reply_id)._json
+                        process_tweet(tw, researcherID, searchID)
+                        cursor.execute('UPDATE TWEETS SET reply_id = ? where tweet_id = ?', reply_id, tweet['id'])
+                    except:
+                        print(f"Tweet not found {reply_id}")
+                        
+
+
 				
-
-
 cursor.close()
 conn.close()
